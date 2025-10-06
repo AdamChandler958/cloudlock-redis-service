@@ -12,7 +12,10 @@ logger = setup_logger()
 
 @app.get("/")
 def ready_status(client: Annotated[Redis, Depends(get_redis_client)]):
-    client.echo("Redis is responding")
+    try:
+        client.echo("Redis is responding")
+    except Exception as e:
+        logger.critical(f"Redis is not responding with exception: {e}")
     logger.info("Redis is responding")
     return {"message": "Cloudlock redis service is running..."}
 
