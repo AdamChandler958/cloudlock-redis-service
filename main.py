@@ -3,13 +3,17 @@ from app.src.utils import get_redis_client
 import uvicorn
 from typing import Annotated
 from redis import Redis
+from app.src.logger import setup_logger
 
 app = FastAPI()
+
+logger = setup_logger()
 
 
 @app.get("/")
 def ready_status(client: Annotated[Redis, Depends(get_redis_client)]):
     client.echo("Redis is responding")
+    logger.info("Redis is responding")
     return {"message": "Cloudlock redis service is running..."}
 
 
