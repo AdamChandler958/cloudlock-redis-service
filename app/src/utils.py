@@ -9,5 +9,11 @@ REDIS_PORT = os.getenv("REDIS_PORT")
 
 
 def get_redis_client():
-    r = redis.Redis(host="redis", port=REDIS_PORT, db=0, password=REDIS_PASSWORD)
+    r = redis.Redis(
+        host="redis",
+        port=REDIS_PORT,
+        db=0,
+        password=REDIS_PASSWORD,
+        decode_responses=True,
+    )
     return r

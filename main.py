@@ -4,10 +4,14 @@ import uvicorn
 from typing import Annotated
 from redis import Redis
 from app.src.logger import setup_logger
+from app.src.endpoints import metadata
+
 
 app = FastAPI()
 
 logger = setup_logger()
+
+app.include_router(metadata.router)
 
 
 @app.get("/")
