@@ -16,6 +16,7 @@ app.include_router(metadata.router)
 
 @app.get("/")
 def ready_status(client: Annotated[Redis, Depends(get_redis_client)]):
+    logger.info("Starting redis-api-service...")
     try:
         client.echo("Redis is responding")
     except Exception as e:
