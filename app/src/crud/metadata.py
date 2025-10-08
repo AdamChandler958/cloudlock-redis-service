@@ -21,7 +21,7 @@ def add_file_metadata(file_name: str, metadata: Metadata, redis_client: Redis):
             mapping={
                 "bucket_name": metadata.bucket_name,
                 "object_name": file_name,
-                "filetype": metadata.file_type,
+                "file_type": metadata.file_type,
                 "file_size": metadata.file_size,
                 "tags": tags_json if tags_json is not None else "",
             },
@@ -44,3 +44,17 @@ def add_file_metadata(file_name: str, metadata: Metadata, redis_client: Redis):
 
     logger.info("Metadata added successfully.")
     return True
+
+
+def read_metadata(file_name: str, bucket_name: str, redis_client: Redis):
+    logger.info("Reading metadata...")
+
+    try:
+        metadata_response = redis_client.hgetall(
+            name=f"metadata:{bucket_name}:{file_name}"
+        )
+    except Exception as e:
+        logger.error(f"Unable to fetch metadata due to error: {e}")
+
+    logger.info("Metadata retrieval successful.")
+    return metadata_response
