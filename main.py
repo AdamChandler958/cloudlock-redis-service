@@ -4,7 +4,7 @@ import uvicorn
 from typing import Annotated
 from redis import Redis
 from app.src.logger import setup_logger
-from app.src.endpoints import metadata
+from app.src.endpoints import metadata, tags
 
 
 app = FastAPI()
@@ -12,6 +12,7 @@ app = FastAPI()
 logger = setup_logger()
 
 app.include_router(metadata.router)
+app.include_router(tags.router)
 
 
 @app.get("/")
