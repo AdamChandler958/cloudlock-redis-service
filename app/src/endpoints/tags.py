@@ -12,7 +12,7 @@ logger = setup_logger()
 
 
 @router.get("/{file_name}")
-def get_tags_for_item(
+async def get_tags_for_item(
     file_name: str,
     bucket_name: str,
     redis_client: Annotated[Redis, Depends(get_redis_client)],
