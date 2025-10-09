@@ -29,7 +29,7 @@ def create_tag(metadata_key: str, new_tag_val: str, redis_client: Redis):
         logger.error("Exiting tag creation routine")
         return False
 
-    existing_tags = [] if tags_retrieved is None else json.dumps(tags_retrieved)
+    existing_tags = [] if tags_retrieved is None else json.loads(tags_retrieved)
 
     if new_tag_val not in existing_tags:
         logger.info("Adding tag to file...")
