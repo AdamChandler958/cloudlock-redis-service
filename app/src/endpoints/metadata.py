@@ -4,7 +4,8 @@ from app.src.utils import get_redis_client
 from typing import Annotated
 from redis import Redis
 from app.src.models.Metadata import Metadata
-from app.src.crud.metadata import add_file_metadata, read_metadata
+from app.src.models.MetadataPatch import MetadataPatch
+from app.src.crud.metadata import add_file_metadata, read_metadata, update_metadata
 import json
 
 
@@ -39,6 +40,9 @@ async def read_file_metadata(
     )
 
     metadata_response = read_metadata(file_name, bucket_name, redis_client)
+    if metadata_response == {}:
+        logger.error("No metadata set for object.")
+        return {"message": "No metadata set."}
 
     tags_value = metadata_response.get("tags")
     if isinstance(tags_value, str):
@@ -49,3 +53,26 @@ async def read_file_metadata(
     metadata = Metadata(**metadata_response)
     logger.info("Request for metadata processed")
     return metadata
+
+
+@router.patch("/")
+async def metadata_update(
+    metadata_patch: MetadataPatch,
+    redis_client: Annotated[Redis, Depends(get_redis_client)],
+):
+    logger.info(
+        f"Received request to update metadata for file {metadata_patch.object_name} in bucket {metadata_patch.bucket_name}"
+    )
+    if update_metadata(
+        file_name=metadata_patch.object_name,
+        bucket_name=metadata_patch.bucket_name,
+        redis_client=redis_client,
+        file_type=metadata_patch.file_type,
+        file_size=metadata_patch.file_size,
+        tags=metadata_patch.tags,
+    ):
+        logger.info("Request processed successfully")
+        return True
+    else:
+        logger.error("Request failed to process")
+        return False
