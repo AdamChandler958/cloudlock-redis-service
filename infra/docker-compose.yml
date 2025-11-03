@@ -1,0 +1,18 @@
+services:
+  redis-api-service:
+  build:
+    context: ../cloudlock-redis-service
+    dockerfile: infra/Dockerfile
+  image: redis-api-service:latest
+  restart: "always"
+  ports:
+    - "3080:3080"
+  depends_on:
+    - redis
+
+  redis:
+    image: redis/redis-stack:latest
+    command: redis-server --requirepass ${REDIS_PASSWORD} --dir /data
+    restart: "always"
+    volumes:
+      - redis-data:/data
